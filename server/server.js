@@ -4,7 +4,8 @@ const express               = require("express");
 const port                  = process.env.PORT;
 const socketIO              = require("socket.io");
 const http                  = require("http");
-const {genMsg}               = require("./utils/message");
+const {genMsg, 
+genPosMsg}                  = require("./utils/message");
 
 var app                     = express();
 var server                  = http.createServer(app);
@@ -22,6 +23,12 @@ io.on('connection', function(socket){
     socket.on('sendMsg', function(data, callback) {
         console.log('sendMsg:', data);
         io.emit('newMsg', genMsg(data.text, data.from));
+        callback();
+    });
+    
+    socket.on('sendPosMsg', function(data, callback) {
+        console.log('sendMsg:', data);
+        io.emit('newPosMsg', genPosMsg(data.lat, data.lng, "Admin"));
         callback();
     });
     
