@@ -4,6 +4,7 @@ const express               = require("express");
 const port                  = process.env.PORT;
 const socketIO              = require("socket.io");
 const http                  = require("http");
+const {genMsg}               = require("./utils/message");
 
 var app                     = express();
 var server                  = http.createServer(app);
@@ -14,19 +15,14 @@ app.use(express.static(publicPath));
 io.on('connection', function(socket){
     console.log("New user connected");
     
-    // socket.emit('newMsg', {
-    //     text: "Welcome to the chat",
-    //     from: "system",
-    //     time:  new Date().getHours() + ':' + new Date().getMinutes()
-    // });
+    socket.emit('newMsg', genMsg('Welcome to the chat','System'));
     
-    socket.on('sendMsg', function(data) {
+    socket.broadcast.emit('newMsg', genMsg("A user has joined the chat", "System"));
+    
+    socket.on('sendMsg', function(data, callback) {
         console.log('sendMsg:', data);
-        io.emit('newMsg', {
-            text: data.text,
-            from: data.from,
-            time: new Date().getHours() + ':' + new Date().getMinutes()
-        })
+        io.emit('newMsg', genMsg(data.text, data.from));
+        callback();
     });
     
     socket.on('disconnect', function(socket){

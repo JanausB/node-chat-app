@@ -2,7 +2,7 @@ var socket = io();
 
 socket.on('connect', function(){
    console.log("connected to server"); 
-//   sendMessage("User has joined the chat", "jay")
+   
    
 });
 
@@ -12,11 +12,20 @@ socket.on('disconnect', function(){
 
 socket.on('newMsg', function(data){
     console.log('Message Received:', data);
+    var li = `<li>${data.from} : ${data.text}</li>`;
+    $("#messages").append(li);
 });
 
-function sendMessage(text, from){
+async function sendMessage(text, from){
     socket.emit('sendMsg', {
       text: text,
       from: from
+   }, function(){
+       console.log("OK");
    });
 }
+
+$("#message-form").on('submit', function(e){
+    e.preventDefault();
+    sendMessage($('[name="message"]').val(), "user") 
+});
