@@ -14,14 +14,19 @@ app.use(express.static(publicPath));
 io.on('connection', function(socket){
     console.log("New user connected");
     
-    socket.emit('newMsg', {
-        text: "Welcome to the chat",
-        from: "system",
-        time:  new Date().getHours() + ':' + new Date().getMinutes()
-    });
+    // socket.emit('newMsg', {
+    //     text: "Welcome to the chat",
+    //     from: "system",
+    //     time:  new Date().getHours() + ':' + new Date().getMinutes()
+    // });
     
     socket.on('sendMsg', function(data) {
         console.log('sendMsg:', data);
+        io.emit('newMsg', {
+            text: data.text,
+            from: data.from,
+            time: new Date().getHours() + ':' + new Date().getMinutes()
+        })
     });
     
     socket.on('disconnect', function(socket){

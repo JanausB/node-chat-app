@@ -2,7 +2,7 @@ var socket = io();
 
 socket.on('connect', function(){
    console.log("connected to server"); 
-   sendMessage("User has joined the chat", "jay")
+//   sendMessage("User has joined the chat", "jay")
    
 });
 
