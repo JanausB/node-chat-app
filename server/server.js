@@ -28,7 +28,7 @@ io.on('connection', function(socket){
     
     socket.on('sendPosMsg', function(data, callback) {
         console.log('sendMsg:', data);
-        io.emit('newPosMsg', genPosMsg(data.lat, data.lng, "Admin"));
+        io.emit('newPosMsg', genPosMsg(data.lat, data.lng, "System"));
         callback();
     });
     

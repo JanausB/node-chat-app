@@ -12,8 +12,27 @@ socket.on('disconnect', function(){
 
 socket.on('newMsg', function(data){
     console.log('Message Received:', data);
-    var li = `<li>${data.from} : ${data.text}</li>`;
-    $("#messages").append(li);
+    var formattedTime = moment(data.time).format('h:mm a');
+    var template = $('#message-template').html();
+    var html = Mustache.render(template, {
+        text: data.text,
+        from: data.from,
+        time: formattedTime
+    });
+    $('#messages').append(html);
+    
+});
+
+socket.on('newPosMsg', function(data){
+    console.log('Message Received:', data);
+    var formattedTime = moment(data.time).format('h:mm a');
+    var template = $('#pos-template').html();
+    var html = Mustache.render(template, {
+        text: data.text,
+        from: data.from,
+        time: formattedTime
+    });
+    $('#messages').append(html);
 });
 
 async function sendMessage(text, from){
@@ -53,8 +72,3 @@ locationButton.on('click', function(){
    });
 });
 
-socket.on('newPosMsg', function(data){
-    console.log('Message Received:', data);
-    var li = `<li>${data.from} : <a target='_blank' href='${data.url}'>My Location</a></li>`;
-    $("#messages").append(li);
-});
