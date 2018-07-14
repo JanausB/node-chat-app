@@ -19,8 +19,6 @@ app.use(express.static(publicPath));
 io.on('connection', function(socket){
     console.log("New user connected");
     
-    
-    
     socket.on('join', function(params, callback) {
         if(!isRealString(params.name) || !isRealString(params.room)){
             return callback("Name and Room are required.");
@@ -38,13 +36,17 @@ io.on('connection', function(socket){
     
     socket.on('sendMsg', function(data, callback) {
         console.log('sendMsg:', data);
-        io.emit('newMsg', genMsg(data.text, data.from));
+        var user = users.getUser(socket.id);
+        if(user && isRealString(data.text))
+            io.to(user.room).emit('newMsg', genMsg(data.text, user.name));
         callback();
     });
     
     socket.on('sendPosMsg', function(data, callback) {
         console.log('sendMsg:', data);
-        io.emit('newPosMsg', genPosMsg(data.lat, data.lng, "System"));
+        var user = users.getUser(socket.id);
+        if(user)
+            io.to(user.room).emit('newPosMsg', genPosMsg(data.lat, data.lng, user.name));
         callback();
     });
     
@@ -56,23 +58,12 @@ io.on('connection', function(socket){
             io.to(user.room).emit('newMsg', genMsg(`${user.name} has left the chat`, "System"));
         }
     });
-    
-    
 });
-
-
 
 
 app.get('/', function(req, res){
    res.render('index.html'); 
 });
-
-
-
-
-
-
-
 
 server.listen(process.env.PORT, process.env.IP, function(){
     console.log("node-chat-app listner Service spinning, up. We're in the pipe, 5 by 5!");
